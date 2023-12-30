@@ -1,118 +1,120 @@
-<html lang="pt-br">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Belluno - Atendimento via Chat</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    input[type="text"], select {
-      width: calc(100% - 16px); /* Ajuste no tamanho para centralizar */
-      padding: 8px;
-      font-size: 18px;
-      margin: auto; /* Centraliza o elemento */
-      display: block; /* Para aplicar a margem automática */
-    }
-    .liberado {
-      color: green;
-      font-weight: bold;
-    }
-    .em-atendimento {
-      color: red;
-      font-weight: bold;
-    }
-    .selected {
-      background-color: #e0e0e0;
-    }
-    h1 {
-      text-align: center;
-    }
-  </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .liberado {
+            background-color: green;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .emAtendimento {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .acoes {
+            display: none;
+            font-size: 20px;
+        }
+        tr.selecionado .acoes {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Belluno - Atendimento via Chat</h1>
-    
-    <table id="empresas">
-      <thead>
-        <tr>
-          <th>Empresas</th>
-          <th>Liberado/Em Atendimento</th>
-          <th>Login</th>
-          <th>Observação</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" value="Empresa A"></td>
-          <td class="status">
-            <select>
-              <option value="liberado">Liberado</option>
-              <option value="em-atendimento">Em Atendimento</option>
-            </select>
-          </td>
-          <td><input type="text" value="Login A"></td>
-          <td><input type="text" value="Observações A"></td>
-        </tr>
-        <!-- Adicione mais linhas conforme necessário -->
-      </tbody>
-    </table>
-  </div>
+    <div class="container">
+        <table id="tabela" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Liberado/Em Atendimento</th>
+                    <th>Login</th>
+                    <th>Observação</th>
+                    <th class='acoes'>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick='selecionar(this)'>
+                    <td contenteditable='true'>Empresa 1</td>
+                    <td class='statusCell'>
+                        <select class='status' onchange='atualizarStatus(this)'>
+                            <option value='Liberado'>Liberado</option>
+                            <option value='Em Atendimento'>Em Atendimento</option>
+                        </select>
+                    </td>
+                    <td contenteditable='true'>Login 1</td>
+                    <td contenteditable='true'>Observação 1</td>
+                    <td class='acoes'>
+                        <button class="btn btn-primary" onclick='editar(this)'>OK</button>
+                        <button class="btn btn-danger" onclick='excluir(this)'>Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-success" onclick='adicionar()'>Adicionar Empresa</button>
+    </div>
 
-  <script>
-    const table = document.getElementById('empresas');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      row.addEventListener('click', function() {
-        const selected = table.getElementsByClassName('selected');
-        for (let j = 0; j < selected.length; j++) {
-          selected[j].classList.remove('selected');
+    <script>
+        function atualizarStatus(elemento) {
+            var linha = elemento.parentNode.parentNode.parentNode;
+            var statusCell = linha.getElementsByClassName('statusCell')[0];
+            if (elemento.value == 'Liberado') {
+                linha.className = 'liberado';
+            } else if (elemento.value == 'Em Atendimento') {
+                linha.className = 'emAtendimento';
+            }
+            statusCell.innerText = elemento.value;
         }
-        this.classList.add('selected');
-      });
 
-      const statusCell = row.querySelector('.status select');
-      statusCell.addEventListener('change', function() {
-        const selectedStatus = this.value;
-        const statusColumn = this.parentNode;
-        const row = statusColumn.parentNode;
-
-        if (selectedStatus === 'liberado') {
-          row.classList.remove('em-atendimento');
-          row.classList.add('liberado');
-        } else if (selectedStatus === 'em-atendimento') {
-          row.classList.remove('liberado');
-          row.classList.add('em-atendimento');
+        function selecionar(linha) {
+            linha.classList.add('selecionado');
         }
-      });
-    }
-  </script>
+
+        function excluir(elemento) {
+            var linha = elemento.parentNode.parentNode;
+            linha.parentNode.removeChild(linha);
+        }
+
+        function adicionar() {
+            var tabela = document.getElementById('tabela').getElementsByTagName('tbody')[0];
+            var linha = tabela.insertRow(-1);
+            linha.onclick = function() { selecionar(this); };
+            var celulaEmpresa = linha.insertCell(-1);
+            celulaEmpresa.contentEditable = 'true';
+            var celulaStatus = linha.insertCell(-1);
+            celulaStatus.className = 'statusCell';
+            var select = document.createElement('select');
+            select.className = 'status';
+            select.onchange = function() { atualizarStatus(this); };
+            var opcaoLiberado = document.createElement('option');
+            opcaoLiberado.value = 'Liberado';
+            opcaoLiberado.text = 'Liberado';
+            select.appendChild(opcaoLiberado);
+            var opcaoEmAtendimento = document.createElement('option');
+            opcaoEmAtendimento.value = 'Em Atendimento';
+            opcaoEmAtendimento.text = 'Em Atendimento';
+            select.appendChild(opcaoEmAtendimento);
+            celulaStatus.appendChild(select);
+            var celulaLogin = linha.insertCell(-1);
+            celulaLogin.contentEditable = 'true';
+            var celulaObservacao = linha.insertCell(-1);
+            celulaObservacao.contentEditable = 'true';
+            var celulaAcoes = linha.insertCell(-1);
+            celulaAcoes.className = 'acoes';
+            var botaoOK = document.createElement('button');
+            botaoOK.className = 'btn btn-primary';
+            botaoOK.innerText = 'OK';
+            botaoOK.onclick = function() { editar(this); };
+            celulaAcoes.appendChild(botaoOK);
+            var botaoExcluir = document.createElement('button');
+            botaoExcluir.className = 'btn btn-danger';
+            botaoExcluir.innerText = 'Excluir';
+            botaoExcluir.onclick = function() { excluir(this); };
+            celulaAcoes.appendChild(botaoExcluir);
+        }
+    </script>
 </body>
 </html>
