@@ -1,20 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Página de Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form action="https://rfr3it4s.github.io/teste/" method="post">
-        <div class="container">
-            <label for="uname"><b>Nome de usuário</b></label>
-            <input type="text" placeholder="Insira o nome de usuário" name="uname" required>
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 
-            <label for="psw"><b>Senha</b></label>
-            <input type="password" placeholder="Insira a senha" name="psw" required>
+// Configura o Express para usar o body-parser como middleware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-            <button type="submit">Login</button>
-        </div>
-    </form>
-</body>
-</html>
+// Cria uma rota POST para registrar o nome do usuário.
+app.post('/segunda_pagina.html', function (req, res) {
+  const username = req.body.uname;
+  console.log('Nome de usuário registrado:', username);
+
+  // Aqui você pode adicionar o código para salvar o nome do usuário em um banco de dados ou arquivo.
+
+  res.send('Nome de usuário registrado com sucesso!');
+});
+
+app.listen(3000, function () {
+  console.log('Aplicação escutando na porta 3000!');
+});
