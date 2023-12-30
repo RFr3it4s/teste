@@ -1,120 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 22px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        th {
+            background-color: #000080;
+            color: white;
+        }
+        .bold-black {
+            color: black;
+            font-weight: bold;
+        }
         .liberado {
             background-color: green;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
         }
         .emAtendimento {
             background-color: red;
+        }
+        button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.delete {
+            background-color: #b22222;
             color: white;
-            font-weight: bold;
-            font-size: 18px;
         }
-        .acoes {
-            display: none;
-            font-size: 20px;
+        button.delete:hover {
+            background-color: #8b0000;
         }
-        tr.selecionado .acoes {
-            display: block;
+        button.add {
+            background-color: #4caf50;
+            color: white;
+        }
+        button.add:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <table id="tabela" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Empresa</th>
-                    <th>Liberado/Em Atendimento</th>
-                    <th>Login</th>
-                    <th>Observação</th>
-                    <th class='acoes'>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr onclick='selecionar(this)'>
-                    <td contenteditable='true'>Empresa 1</td>
-                    <td class='statusCell'>
-                        <select class='status' onchange='atualizarStatus(this)'>
-                            <option value='Liberado'>Liberado</option>
-                            <option value='Em Atendimento'>Em Atendimento</option>
-                        </select>
-                    </td>
-                    <td contenteditable='true'>Login 1</td>
-                    <td contenteditable='true'>Observação 1</td>
-                    <td class='acoes'>
-                        <button class="btn btn-primary" onclick='editar(this)'>OK</button>
-                        <button class="btn btn-danger" onclick='excluir(this)'>Excluir</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <button class="btn btn-success" onclick='adicionar()'>Adicionar Empresa</button>
-    </div>
+    <table id="companyTable">
+        <tr>
+            <th>Empresa</th>
+            <th>Status</th>
+            <th>Login</th>
+            <th>Observação</th>
+            <th>Ações</th>
+        </tr>
+        <tr>
+            <td contenteditable="true">Empresa 1</td>
+            <td>
+                <select class="bold-black" onchange="changeColor(this)">
+                    <option value="">Selecione...</option>
+                    <option value="liberado">Liberado</option>
+                    <option value="emAtendimento">Em Atendimento</option>
+                </select>
+                <span class="bold-black" style="display: none;"></span>
+            </td>
+            <td contenteditable="true">Login 1</td>
+            <td contenteditable="true">Observação 1</td>
+            <td>
+                <button class="delete" onclick="deleteRow(this)">Excluir</button>
+            </td>
+        </tr>
+    </table>
+    <button class="add" onclick="addRow()">Adicionar Empresa</button>
 
     <script>
-        function atualizarStatus(elemento) {
-            var linha = elemento.parentNode.parentNode.parentNode;
-            var statusCell = linha.getElementsByClassName('statusCell')[0];
-            if (elemento.value == 'Liberado') {
-                linha.className = 'liberado';
-            } else if (elemento.value == 'Em Atendimento') {
-                linha.className = 'emAtendimento';
-            }
-            statusCell.innerText = elemento.value;
+        function addRow() {
+            var table = document.getElementById("companyTable");
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+
+            cell1.contentEditable = "true";
+            cell1.innerHTML = "Nova Empresa";
+            cell2.innerHTML = '<select class="bold-black" onchange="changeColor(this)"><option value="">Selecione...</option><option value="Liberado">Liberado</option><option value="Em Atendimento">Em Atendimento</option></select><span class="bold-black" style="display: none;"></span>';
+            cell3.contentEditable = "true";
+            cell3.innerHTML = "Novo Login";
+            cell4.contentEditable = "true";
+            cell4.innerHTML = "Nova Observação";
+            cell5.innerHTML = '<button class="delete" onclick="deleteRow(this)">Excluir</button>';
         }
 
-        function selecionar(linha) {
-            linha.classList.add('selecionado');
+        function changeColor(selectObj) {
+            var row = selectObj.parentNode.parentNode;
+            row.className = selectObj.value;
+            selectObj.style.display = 'none';
+            var statusText = selectObj.nextSibling;
+            statusText.style.display = 'inline';
+            statusText.textContent = selectObj.value;
+            statusText.onclick = function() {
+                this.style.display = 'none';
+                selectObj.style.display = 'inline';
+                selectObj.value = this.textContent;
+                row.className = '';
+            };
         }
 
-        function excluir(elemento) {
-            var linha = elemento.parentNode.parentNode;
-            linha.parentNode.removeChild(linha);
-        }
-
-        function adicionar() {
-            var tabela = document.getElementById('tabela').getElementsByTagName('tbody')[0];
-            var linha = tabela.insertRow(-1);
-            linha.onclick = function() { selecionar(this); };
-            var celulaEmpresa = linha.insertCell(-1);
-            celulaEmpresa.contentEditable = 'true';
-            var celulaStatus = linha.insertCell(-1);
-            celulaStatus.className = 'statusCell';
-            var select = document.createElement('select');
-            select.className = 'status';
-            select.onchange = function() { atualizarStatus(this); };
-            var opcaoLiberado = document.createElement('option');
-            opcaoLiberado.value = 'Liberado';
-            opcaoLiberado.text = 'Liberado';
-            select.appendChild(opcaoLiberado);
-            var opcaoEmAtendimento = document.createElement('option');
-            opcaoEmAtendimento.value = 'Em Atendimento';
-            opcaoEmAtendimento.text = 'Em Atendimento';
-            select.appendChild(opcaoEmAtendimento);
-            celulaStatus.appendChild(select);
-            var celulaLogin = linha.insertCell(-1);
-            celulaLogin.contentEditable = 'true';
-            var celulaObservacao = linha.insertCell(-1);
-            celulaObservacao.contentEditable = 'true';
-            var celulaAcoes = linha.insertCell(-1);
-            celulaAcoes.className = 'acoes';
-            var botaoOK = document.createElement('button');
-            botaoOK.className = 'btn btn-primary';
-            botaoOK.innerText = 'OK';
-            botaoOK.onclick = function() { editar(this); };
-            celulaAcoes.appendChild(botaoOK);
-            var botaoExcluir = document.createElement('button');
-            botaoExcluir.className = 'btn btn-danger';
-            botaoExcluir.innerText = 'Excluir';
-            botaoExcluir.onclick = function() { excluir(this); };
-            celulaAcoes.appendChild(botaoExcluir);
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
         }
     </script>
 </body>
 </html>
+
