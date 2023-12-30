@@ -1,0 +1,118 @@
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belluno - Atendimento via Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    input[type="text"], select {
+      width: calc(100% - 16px); /* Ajuste no tamanho para centralizar */
+      padding: 8px;
+      font-size: 18px;
+      margin: auto; /* Centraliza o elemento */
+      display: block; /* Para aplicar a margem automática */
+    }
+    .liberado {
+      color: green;
+      font-weight: bold;
+    }
+    .em-atendimento {
+      color: red;
+      font-weight: bold;
+    }
+    .selected {
+      background-color: #e0e0e0;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Belluno - Atendimento via Chat</h1>
+    
+    <table id="empresas">
+      <thead>
+        <tr>
+          <th>Empresas</th>
+          <th>Liberado/Em Atendimento</th>
+          <th>Login</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" value="Empresa A"></td>
+          <td class="status">
+            <select>
+              <option value="liberado">Liberado</option>
+              <option value="em-atendimento">Em Atendimento</option>
+            </select>
+          </td>
+          <td><input type="text" value="Login A"></td>
+          <td><input type="text" value="Observações A"></td>
+        </tr>
+        <!-- Adicione mais linhas conforme necessário -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const table = document.getElementById('empresas');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      row.addEventListener('click', function() {
+        const selected = table.getElementsByClassName('selected');
+        for (let j = 0; j < selected.length; j++) {
+          selected[j].classList.remove('selected');
+        }
+        this.classList.add('selected');
+      });
+
+      const statusCell = row.querySelector('.status select');
+      statusCell.addEventListener('change', function() {
+        const selectedStatus = this.value;
+        const statusColumn = this.parentNode;
+        const row = statusColumn.parentNode;
+
+        if (selectedStatus === 'liberado') {
+          row.classList.remove('em-atendimento');
+          row.classList.add('liberado');
+        } else if (selectedStatus === 'em-atendimento') {
+          row.classList.remove('liberado');
+          row.classList.add('em-atendimento');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
