@@ -1,1 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Acesso</title>
+    <script>
+        function checkUser() {
+            var username = document.getElementById('uname').value;
+            if(username === 'belluno') {
+                window.location.href = 'segunda_pagina.html';
+            } else {
+                alert('Acesso negado. Apenas o usuário "belluno" pode acessar a segunda página.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Registro de Acesso</h2>
+    <form onsubmit="event.preventDefault(); checkUser();">
+        <div class="container">
+            <label for="uname"><b>Nome de usuário</b></label>
+            <input type="text" placeholder="Insira o nome de usuário" id="uname" required>
 
+            <button type="submit">Registrar Acesso</button>
+        </div>
+    </form>
+</body>
+</html>
